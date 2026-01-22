@@ -1,34 +1,33 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
+// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 3000,
     proxy: {
-      '/api/potens': {
-        target: 'https://potens.ai',
+      '/api': {
+        target: 'http://localhost:5173', // 실제 API 서버 주소에 맞게 수정하세요
         changeOrigin: true,
-        rewrite: (path) => {
-          // /api/potens -> potens.ai의 실제 API 경로로 변환
-          console.log('Original path:', path);
-          const newPath = path.replace(/^\/api\/potens/, '/api/v1/chat'); // 실제 API 경로로 수정 필요
-          console.log('Rewritten path:', newPath);
-          return newPath;
+        /**
+         * [해결] TS6133 에러 대응
+         * 사용하지 않는 매개변수 앞에 _를 붙여 빌드 에러를 방지합니다.
+         */
+        configure: (proxy, _options) => { // options -> _options
+          
+          proxy.on('error', (err, _req, _res) => { // req, res -> _req, _res
+            console.error('proxy error', err);
+          });
+
+          proxy.on('proxyReq', (_proxyReq, req, _res) => { // proxyReq, res -> _proxyReq, _res
+            console.log('Sending Request to the Target:', req.method, req.url);
+          });
+
+          proxy.on('proxyRes', (proxyRes, _req, _res) => { // res -> _res
+            console.log('Received Response from the Target:', proxyRes.statusCode);
+          });
         },
-        secure: false, // 개발 중에는 false로 설정
-        configure: (proxy, options) => {
-          proxy.on('error', (err, req, res) => {
-            console.log('proxy error', err);
-          });
-          proxy.on('proxyReq', (proxyReq, req, res) => {
-            console.log('Sending Request:', req.method, req.url);
-          });
-          proxy.on('proxyRes', (proxyRes, req, res) => {
-            console.log('Received Response:', proxyRes.statusCode, req.url);
-          });
-        }
-      }
-    }
-  }
-})
+      },
+    },
+  },
+});
