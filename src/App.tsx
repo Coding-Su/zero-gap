@@ -11,12 +11,10 @@ function App() {
   const [userInfo, setUserInfo] = useState({ name: "", role: "" });
   const [activeFeatureId, setActiveFeatureId] = useState<string | null>(null);
   
-  // 모달 상태 관리
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [targetProjectId, setTargetProjectId] = useState<string | null>(null);
 
-  // 로컬 스토리지 연동
   const [features, setFeatures] = useState<FeaturePolicy[]>(() => {
     const saved = localStorage.getItem("potens-dot-vms");
     return saved ? JSON.parse(saved) : [];
@@ -26,31 +24,23 @@ function App() {
     localStorage.setItem("potens-dot-vms", JSON.stringify(features));
   }, [features]);
 
-  // 로그인/로그아웃
-  const handleLogin = (name: string, role: string) => { 
-    setUserInfo({ name, role }); 
-    setView('list'); 
-  };
-  const handleLogout = () => { 
-    setView('login'); 
-    setUserInfo({ name: "", role: "" }); 
-  };
+  const handleLogin = (name: string, role: string) => { setUserInfo({ name, role }); setView('list'); };
+  const handleLogout = () => { setView('login'); setUserInfo({ name: "", role: "" }); };
 
-  // App.tsx 내 프로젝트 저장 로직
+  // [해결] image_643beb.png 에러: checklist 필드를 초기값으로 추가해야 합니다.
   const handleSaveProject = (name: string, desc: string) => {
     const newProject: FeaturePolicy = {
       id: `p-${Date.now()}`,
-      featureName: name, // '프로젝트 이름' 칸의 입력값
+      featureName: name,
       currentVersionId: "v1.0",
       history: [{
         version: "v1.0",
         updatedAt: new Date().toLocaleDateString(),
         author: userInfo.name,
-        // [핵심] '프로젝트 설명' 칸의 입력값(desc)을 여기에 저장합니다.
-        changeLog: desc || "최초 생성된 프로젝트입니다.", 
+        changeLog: desc || "최초 생성",
         policyData: { "기본요금": "3000", "할증률": "10%" },
         edgeCases: [],
-        checklist: []
+        checklist: [] // [해결] types.ts와 규격 일치
       }]
     };
     setFeatures([newProject, ...features]);
@@ -60,22 +50,13 @@ function App() {
   const handleSaveVersion = (projectId: string, newVersion: any) => {
     setFeatures(prev => prev.map(f => {
       if (f.id === projectId) {
-        return {
-          ...f,
-          currentVersionId: newVersion.version,
-          history: [newVersion, ...f.history]
-        };
+        return { ...f, currentVersionId: newVersion.version, history: [newVersion, ...f.history] };
       }
       return f;
     }));
   };
 
-  // 삭제 프로세스
-  const openDeleteConfirm = (id: string) => {
-    setTargetProjectId(id);
-    setIsDeleteModalOpen(true);
-  };
-
+  const openDeleteConfirm = (id: string) => { setTargetProjectId(id); setIsDeleteModalOpen(true); };
   const handleDeleteProject = () => {
     if (targetProjectId) {
       setFeatures(features.filter(f => f.id !== targetProjectId));
@@ -84,6 +65,8 @@ function App() {
     }
   };
 
+  // [해결] image_65206e.png 41번 줄 에러: setSelectedProjectId(함수)가 아닌 activeFeatureId(값)를 사용합니다.
+  const selectedProject = features.find((f) => f.id === activeFeatureId);
   const targetProjectName = features.find(f => f.id === targetProjectId)?.featureName || "";
 
   return (
@@ -95,29 +78,25 @@ function App() {
           <ListPage 
             userName={userInfo.name}
             userRole={userInfo.role}
-            features={features}
+            features={features} // [해결] image_63ca95.png: ListPage가 기대하는 이름 'features'로 전달
             onSelectProject={(id) => { setActiveFeatureId(id); setView('detail'); }}
             onCreateProject={() => setIsCreateModalOpen(true)}
             onDeleteProject={openDeleteConfirm}
             onLogout={handleLogout}
           />
-          
-          {isCreateModalOpen && (
-            <ProjectModal onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveProject} />
-          )}
-
+          {isCreateModalOpen && <ProjectModal onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveProject} />}
           <DeleteModal 
-            isOpen={isDeleteModalOpen}
-            onClose={() => setIsDeleteModalOpen(false)}
-            onConfirm={handleDeleteProject}
-            projectName={targetProjectName}
+            isOpen={isDeleteModalOpen} 
+            onClose={() => setIsDeleteModalOpen(false)} 
+            onConfirm={handleDeleteProject} 
+            projectName={targetProjectName} 
           />
         </>
       )}
 
-      {view === 'detail' && activeFeatureId && (
+      {view === 'detail' && activeFeatureId && selectedProject && (
         <DetailPage 
-          project={features.find(f => f.id === activeFeatureId)!} 
+          project={selectedProject} 
           onBack={() => setView('list')}
           onSaveVersion={handleSaveVersion}
           currentUserName={userInfo.name}
