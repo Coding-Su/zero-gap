@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styles from './LoginPage.module.css'; // 파일명 대소문자 확인!
+import styles from './LoginPage.module.css';
 
 interface LoginPageProps {
   onLogin: (name: string, role: string) => void;
@@ -9,50 +9,46 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [name, setName] = useState("");
   const [role, setRole] = useState("");
 
-  const roles = [
-    { id: 'pm', label: '기획자' },
-    { id: 'dev', label: '개발자' },
-    { id: 'design', label: '디자이너' }
-  ];
-
-  const handleEnter = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (name && role) onLogin(name, role);
-    else alert("이름과 직무를 입력해주세요.");
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.container}>
       <div className={styles.loginCard}>
         <h1 className={styles.title}>Potens.dot VMS</h1>
         
-        <div className={styles.inputGroup}>
-          <label className={styles.label}>사용자 이름</label>
-          <input 
-            className={styles.input}
-            placeholder="성함을 입력하세요"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.inputGroup}>
-          <label className={styles.label}>직무 선택</label>
-          <div className={styles.roleGrid}>
-            {roles.map((r) => (
-              <div 
-                key={r.id}
-                className={`${styles.roleItem} ${role === r.id ? styles.roleItemActive : ''}`}
-                onClick={() => setRole(r.id)}
-              >
-                <span style={{ fontWeight: 700 }}>{r.label}</span>
-              </div>
-            ))}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <div className={styles.inputGroup}>
+            <label>사용자 이름</label>
+            <input 
+              type="text" 
+              placeholder="이름을 입력하세요" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className={styles.input}
+            />
           </div>
-        </div>
 
-        <button className={styles.submitBtn} onClick={handleEnter}>
-          워크스페이스 입장하기
-        </button>
+          <div className={styles.inputGroup}>
+            <label>직무 선택</label>
+            <select 
+              value={role} 
+              onChange={(e) => setRole(e.target.value)}
+              className={styles.select}
+            >
+              <option value="">직무를 선택해주세요</option>
+              <option value="서비스 기획자">기획자</option>
+              <option value="디자이너">디자이너</option>
+              <option value="개발자">개발자</option>
+            </select>
+          </div>
+
+          <button type="submit" className={styles.loginBtn}>
+            워크스페이스 입장하기
+          </button>
+        </form>
       </div>
     </div>
   );
