@@ -1,82 +1,130 @@
-import React, { useState } from "react";
-import Sidebar from "./components/VersionSidebar";
-import PolicyDashboard from "./components/MainDashboard";
-import type { FeaturePolicy, VersionSnapshot } from "./types";
-
-const initialData: FeaturePolicy[] = [
-  {
-    id: "problem-set",
-    featureName: "문제 구성",
-    currentVersionId: "v2.0",
-    history: [
-      {
-        version: "v2.0",
-        updatedAt: "2024-05-20",
-        author: "김기획",
-        changeLog: "문제 수 5개로 증합",
-        problemCount: 5,
-        edgeCases: ["네트워크 단절 시 임시 저장"],
-        tasks: [{ id: 1, text: "신규 문제 추가", done: false }]
-      }
-    ]
-  },
-  {
-    id: "tts-config",
-    featureName: "TTS 음성 설정",
-    currentVersionId: "v1.1",
-    history: [
-      {
-        version: "v1.1",
-        updatedAt: "2024-05-21",
-        author: "박개발",
-        changeLog: "피치 상향 조절",
-        audioPitch: "High",
-        edgeCases: ["긴 문장 읽기 시 끊김"],
-        tasks: [{ id: 1, text: "피치 테스트", done: true }]
-      }
-    ]
-  }
-];
+import { useState, useEffect } from 'react'
+import LoginPage from './pages/LoginPage'
+import ListPage from './pages/ListPage'
+import ProjectModal from './pages/ProjectModal'
+import DeleteModal from './pages/DeleteModal'
+import DetailPage from './pages/DetailPage'
+import type { FeaturePolicy } from './types.ts'
 
 function App() {
-  const [features, setFeatures] = useState<FeaturePolicy[]>(initialData);
-  const [activeFeatureId, setActiveFeatureId] = useState("problem-set");
-  const [activeVersionId, setActiveVersionId] = useState("v2.0");
+  const [view, setView] = useState<'login' | 'list' | 'detail'>('login');
+  const [userInfo, setUserInfo] = useState({ name: "", role: "" });
+  const [activeFeatureId, setActiveFeatureId] = useState<string | null>(null);
+  
+  // 모달 상태 관리
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [targetProjectId, setTargetProjectId] = useState<string | null>(null);
 
-  const currentFeature = features.find(f => f.id === activeFeatureId) || features[0];
-  const currentSnapshot = currentFeature.history.find(v => v.version === activeVersionId) || currentFeature.history[0];
+  // 로컬 스토리지 연동
+  const [features, setFeatures] = useState<FeaturePolicy[]>(() => {
+    const saved = localStorage.getItem("potens-dot-vms");
+    return saved ? JSON.parse(saved) : [];
+  });
 
-  const createNewVersion = (note: string) => {
-    const nextVer = `v${(currentFeature.history.length + 1).toFixed(1)}`;
-    const newSnap: VersionSnapshot = {
-      ...currentSnapshot,
-      version: nextVer,
-      changeLog: note,
-      updatedAt: new Date().toLocaleDateString(),
-      author: "사용자"
-    };
+  useEffect(() => {
+    localStorage.setItem("potens-dot-vms", JSON.stringify(features));
+  }, [features]);
 
-    setFeatures(features.map(f => f.id === activeFeatureId ? { ...f, history: [newSnap, ...f.history] } : f));
-    setActiveVersionId(nextVer);
+  // 로그인/로그아웃
+  const handleLogin = (name: string, role: string) => { 
+    setUserInfo({ name, role }); 
+    setView('list'); 
+  };
+  const handleLogout = () => { 
+    setView('login'); 
+    setUserInfo({ name: "", role: "" }); 
   };
 
+  // App.tsx 내 프로젝트 저장 로직
+  const handleSaveProject = (name: string, desc: string) => {
+    const newProject: FeaturePolicy = {
+      id: `p-${Date.now()}`,
+      featureName: name, // '프로젝트 이름' 칸의 입력값
+      currentVersionId: "v1.0",
+      history: [{
+        version: "v1.0",
+        updatedAt: new Date().toLocaleDateString(),
+        author: userInfo.name,
+        // [핵심] '프로젝트 설명' 칸의 입력값(desc)을 여기에 저장합니다.
+        changeLog: desc || "최초 생성된 프로젝트입니다.", 
+        policyData: { "기본요금": "3000", "할증률": "10%" },
+        edgeCases: [],
+        checklist: []
+      }]
+    };
+    setFeatures([newProject, ...features]);
+    setIsCreateModalOpen(false);
+  };
+
+  const handleSaveVersion = (projectId: string, newVersion: any) => {
+    setFeatures(prev => prev.map(f => {
+      if (f.id === projectId) {
+        return {
+          ...f,
+          currentVersionId: newVersion.version,
+          history: [newVersion, ...f.history]
+        };
+      }
+      return f;
+    }));
+  };
+
+  // 삭제 프로세스
+  const openDeleteConfirm = (id: string) => {
+    setTargetProjectId(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteProject = () => {
+    if (targetProjectId) {
+      setFeatures(features.filter(f => f.id !== targetProjectId));
+      setIsDeleteModalOpen(false);
+      setTargetProjectId(null);
+    }
+  };
+
+  const targetProjectName = features.find(f => f.id === targetProjectId)?.featureName || "";
+
   return (
-    <div style={{ display: "flex", height: "100vh", backgroundColor: "#f9fafb" }}>
-      <Sidebar 
-        features={features}
-        activeFeatureId={activeFeatureId}
-        activeVersionId={activeVersionId}
-        onSelect={(fId, vId) => { setActiveFeatureId(fId); setActiveVersionId(vId); }}
-      />
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        <PolicyDashboard 
-          featureName={currentFeature.featureName}
-          data={currentSnapshot} 
-          onConfirm={createNewVersion}
+    <div style={{ width: '100vw', minHeight: '100vh', display: 'block' }}>
+      {view === 'login' && <LoginPage onLogin={handleLogin} />}
+
+      {view === 'list' && (
+        <>
+          <ListPage 
+            userName={userInfo.name}
+            userRole={userInfo.role}
+            features={features}
+            onSelectProject={(id) => { setActiveFeatureId(id); setView('detail'); }}
+            onCreateProject={() => setIsCreateModalOpen(true)}
+            onDeleteProject={openDeleteConfirm}
+            onLogout={handleLogout}
+          />
+          
+          {isCreateModalOpen && (
+            <ProjectModal onClose={() => setIsCreateModalOpen(false)} onSave={handleSaveProject} />
+          )}
+
+          <DeleteModal 
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleDeleteProject}
+            projectName={targetProjectName}
+          />
+        </>
+      )}
+
+      {view === 'detail' && activeFeatureId && (
+        <DetailPage 
+          project={features.find(f => f.id === activeFeatureId)!} 
+          onBack={() => setView('list')}
+          onSaveVersion={handleSaveVersion}
+          currentUserName={userInfo.name}
         />
-      </div>
+      )}
     </div>
-  );
+  )
 }
 
 export default App;

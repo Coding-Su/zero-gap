@@ -1,0 +1,295 @@
+/* 용수님의 기존 디자인 코드 그대로 유지 */
+.wrapper {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  background-color: #f1f4f9;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.sidebar {
+  width: 280px;
+  background-color: #f8fafc;
+  padding: 30px 20px;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+.sidebarTitle {
+  font-weight: 900;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #1e293b;
+}
+.backBtn {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 25px;
+}
+.historyItem {
+  padding: 18px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  box-sizing: border-box;
+}
+.activeItem {
+  border-color: #6366f1;
+}
+.historyHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.historyDate {
+  font-size: 10px;
+  color: #94a3b8;
+}
+.historyLog {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 40px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  box-sizing: border-box;
+}
+.headerCard {
+  background: #2d333b;
+  border-radius: 24px;
+  padding: 45px;
+  color: white;
+  box-sizing: border-box;
+}
+.activeBadge {
+  background: #6366f1;
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 15px;
+}
+.featureTitle {
+  font-size: 34px;
+  font-weight: 900;
+}
+.lastEdit {
+  opacity: 0.7;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.aiInputSection {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 30px;
+  border: 2px dashed #6366f1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 900;
+  color: #1e293b;
+}
+.minutesTextarea {
+  width: 100%;
+  height: 120px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+.aiBtn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.contextSectionBox {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-sizing: border-box;
+}
+.diffContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.diffBadge {
+  background: #eef2ff;
+  color: #6366f1;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 800;
+  border: 1px solid #c7d2fe;
+}
+.currentLogBox {
+  background: #f1f5f9;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  border-left: 5px solid #6366f1;
+}
+.textarea {
+  flex: 1;
+  width: 100%;
+  border: 2px solid #f1f5f9;
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 25px;
+  font-size: 16px;
+  line-height: 1.6;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.contextBar {
+  width: 320px;
+  background-color: #f8fafc;
+  padding: 30px 20px;
+  border-left: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+}
+.edgeCard {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+.checkList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.checkItem {
+  background: #ffffff;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.checkItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+/* 상태별 배지 색상 */
+.inprogress { background: #eef2ff; color: #6366f1; } /* '진행중'용 색상 */
+.done { background: #ecfdf5; color: #10b981; }       /* '완료'용 색상 */
+/* 완료된 항목 스타일 */
+.doneItem {
+  opacity: 0.6;
+  background: #f8fafc;
+}
+
+.strikethrough {
+  text-decoration: line-through;
+  color: #94a3b8;
+}
+.statusBadge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  background: #eef2ff;
+  color: #6366f1;
+}
+.saveBtnFixed {
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 20px;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  box-sizing: border-box;
+}
+.mt30 {
+  margin-top: 30px;
+}
+
+/* [추가] 반응형 미디어 쿼리 */
+@media (max-width: 1100px) {
+  .wrapper {
+    flex-direction: column;
+    height: auto;
+    overflow-y: auto;
+  }
+  .sidebar,
+  .contextBar {
+    width: 100%;
+    height: auto;
+    border: none;
+    padding: 20px;
+  }
+  .saveBtnFixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    border-radius: 0;
+    z-index: 1000;
+  }
+}
