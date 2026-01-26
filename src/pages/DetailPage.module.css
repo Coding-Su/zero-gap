@@ -15,7 +15,23 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+
+  overflow-y: auto;        /* ★내용이 넘치면 세로 스크롤 생성 */
+  max-height: 100vh;       /* ★화면 높이를 넘지 않도록 제한 */
 }
+
+/* 스크롤바를 조금 더 얇고 예쁘게 (크롬 기준) */
+.sidebar::-webkit-scrollbar,
+.contextBar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.contextBar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
 .sidebarTitle {
   font-weight: 900;
   margin-bottom: 20px;
@@ -190,13 +206,31 @@
 .contextBar {
   width: 320px;
   background-color: #f8fafc;
-  padding: 30px 20px;
   border-left: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
+  height: 100vh;           /* ★중요: 화면 높이에 딱 맞게 고정 */
   position: relative;
   box-sizing: border-box;
+  overflow: hidden;        /* 사이드바 자체의 넘침은 막음 */
 }
+
+/* [추가] 실제 내용이 담길 영역 - 여기에 스크롤 부여 */
+.contextScrollArea {
+  flex: 1;                 /* 남은 공간을 모두 차지 */
+  overflow-y: auto;        /* 내용이 많을 때만 스크롤 생성 */
+  padding: 30px 20px 10px 20px; /* 기존 상단 패딩 유지 */
+}
+
+/* 스크롤바 커스텀 (디자인 일관성) */
+.contextScrollArea::-webkit-scrollbar {
+  width: 5px;
+}
+.contextScrollArea::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
 .edgeCard {
   background: white;
   padding: 16px 20px;
@@ -211,6 +245,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  padding-bottom: 100px; /* 버튼 높이만큼 여백 */
 }
 .checkItem {
   background: #ffffff;
@@ -250,11 +285,9 @@
   color: #6366f1;
 }
 .saveBtnFixed {
-  position: absolute;
-  bottom: 30px;
-  left: 20px;
-  right: 20px;
-  background: #6366f1;
+  flex-shrink: 0;          /* ★중요: 공간이 부족해도 버튼 크기를 줄이지 않음 */
+  margin: 10px 20px 30px 20px; 
+  background: #6366f1;     /* 용수님의 보라색 테마 유지 */
   color: white;
   border: none;
   padding: 20px;
@@ -264,6 +297,7 @@
   cursor: pointer;
   box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
   box-sizing: border-box;
+  width: calc(100% - 40px);
 }
 .mt30 {
   margin-top: 30px;

@@ -39,7 +39,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               className={styles.select}
             >
               <option value="">직무를 선택해주세요</option>
-              <option value="서비스 기획자">기획자</option>
+              <option value="기획자">기획자</option>
               <option value="디자이너">디자이너</option>
               <option value="개발자">개발자</option>
             </select>

@@ -6,6 +6,7 @@ import DeleteModal from './pages/DeleteModal'
 import DetailPage from './pages/DetailPage'
 import type { FeaturePolicy } from './types.ts'
 
+
 function App() {
   const [view, setView] = useState<'login' | 'list' | 'detail'>('login');
   const [userInfo, setUserInfo] = useState({ name: "", role: "" });

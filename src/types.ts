@@ -20,3 +20,11 @@ export interface FeaturePolicy {
   currentVersionId: string; 
   history: HistoryItem[];
 }
+
+export interface AIAnalysisResult {
+  extractedPolicies: {
+    category: string;
+    content: string;
+  }[];
+  potentialEdgeCases: string[];
+}

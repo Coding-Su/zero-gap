@@ -1,0 +1,35 @@
+.overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1100;
+}
+
+.modal {
+  background: white;
+  width: 90%; max-width: 500px;
+  padding: 32px; border-radius: 16px; position: relative;
+  box-shadow: 0 20px 25px rgba(0,0,0,0.2);
+}
+
+.closeBtn {
+  position: absolute; top: 16px; right: 16px;
+  background: none; border: none; font-size: 24px;
+  cursor: pointer; color: #64748b;
+}
+
+.title { font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+.description { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.5; }
+
+.textarea {
+  width: 100%; height: 160px; padding: 12px;
+  border: 1px solid #e2e8f0; border-radius: 8px;
+  background: #f8fafc; color: #1e293b; resize: none;
+}
+
+.footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; align-items: center; }
+.loadingStatus { font-size: 14px; color: #6366f1; font-weight: 600; }
+
+.cancelBtn { background: #f1f5f9; color: #475569; padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+.analyzeBtn { background: #6366f1; color: white; padding: 10px 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
